@@ -1,13 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput,StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { auth } from '../../firebaseConnection'
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+import Home from "../Home";
+
+
 export default function Login(){
+
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const [authUser, setAuthUser] = useState(null);
+
     const navigation = useNavigation();
 
-    function navegaHome(){
-        navigation.navigate('Home');
+    async function handleLogin(){
+
+        signInWithEmailAndPassword(auth, email, password)
+        .then( (user) => {
+            console.log(user);
+            console.log("USUARIO LOGADO:");
+            navigation.navigate('HomeTab');
+            setAuthUser({
+                email: user.user.email,
+                uid: user.user.uid
+                //Pesquisar alguma forma de passar esse email cadastrado
+                // para a pagina de opcoes
+            })
+            
+            setEmail('');
+            setPassword('');
+
+        })
+        .catch( err => {
+            if(err.code === "auth/missing-password"){
+                alert('Preencha todos os campos corretamente.')
+                return;
+            }
+        })
+        
     }
+
+
+
     
     return(
         <View style={styles.container}>
@@ -22,16 +60,22 @@ export default function Login(){
                     <Text style={styles.textoInput}>Email:</Text>
                     <TextInput
                     style={styles.input}
+                    underLineColorAndroid="transparent"
+                    value={email}
+                    onChangeText={ (text) => setEmail(text)}
                     />
                     
                     <Text style={styles.textoInput}>Senha:</Text>
                     <TextInput
                     style={styles.input}
+                    underLineColorAndroid="tansparent"
+                    value={password}
+                    onChangeText={ (text) => setPassword(text)}
                     />
 
                     <TouchableOpacity 
                     style={styles.btnLogin}
-                    onPress={ () => navigation.navigate('Home') }>
+                    onPress={ handleLogin }>
                         <Text style={styles.textoBtn}>Entrar</Text>
                     </TouchableOpacity>
             </View>

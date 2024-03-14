@@ -1,19 +1,36 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { auth } from '../../firebaseConnection'
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-import Home from "../Home";
 
 export default function Cadastro(){
-    const navigation = useNavigation();
-    /*
-    const route = useRoute();
-    */
 
-    const [usuario, setUsuario] = useState('');
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [user, setUser] = useState("")
+
+    const navigation = useNavigation();
+
+    async function handleCreateUser(){
+
+        createUserWithEmailAndPassword(auth, email, password)
+        .then( (user) => {
+            console.log(user);
+            console.log("Conta cadastrada:");
+            navigation.navigate('Login')
+            setEmail('');
+            setPassword('');
+        })
+        .catch( err => {
+            if(err.code === "auth/missing-password"){
+                alert('Preencha todos os campos corretamente.')
+                return;
+            }
+        })
+    }
 
     return(
         <View style={styles.container}>
@@ -23,31 +40,34 @@ export default function Cadastro(){
                 <Text style={styles.textInput}>Usuario: </Text>
                 <TextInput
                 style={styles.input}
+                placeholder=" Nome de usuário"
                 underLineColorAndroid="transparent"
-                onChangeText={(texto) => setUsuario(texto)}
-                value={usuario}
+                value={user}
+                onChangeText={ (text) => setUser(text)}
                 />
 
                 <Text style={styles.textInput}> Email:</Text>
                 <TextInput
                 style={styles.input}
+                placeholder=" Digite seu email"
                 underLineColorAndroid="transparent"
-                onChangeText={(texto) => setEmail(texto)}
                 value={email}
+                onChangeText={ (text) => setEmail(text)}
                 />
 
                 <Text style={styles.textInput}> Senha: </Text>
                 <TextInput
                 style={styles.input}
+                placeholder=" Digite sua senha"
                 underLineColorAndroid="transparent"
-                onChangeText={(texto) => setSenha(texto)}
-                value={senha}
+                value={password}
+                onChangeText={ (text) => setPassword(text)}
                 />
 
 
                 <TouchableOpacity 
                 style={styles.btnCriar}
-                onPress={ () => navigation.navigate('Login') }
+                onPress={ handleCreateUser }
                 title="nova conta">
                     <Text style={styles.btntext}>Criar conta</Text>
                 </TouchableOpacity>

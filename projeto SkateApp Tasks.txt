@@ -1,0 +1,12 @@
+PASSOS PARA CRIAR FEED:
+
+1. Criar text para puxar nome de usuario, descricao (Feito)
+
+2. Criar opcao de login e cadastro primeiro(feito)
+
+3. Criar opcao de puxar os dados do login: nome de usuario.
+
+4. Criar opcao de adicionar no banco de dados
+	adicionar nova publicação
+	com descrição e image.
+
